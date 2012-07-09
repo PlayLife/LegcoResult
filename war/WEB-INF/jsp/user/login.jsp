@@ -7,7 +7,6 @@
 	<title>Register</title>
 	<%@include file="/template/header.jsp"%> 
     <script type='text/javascript' src='/js/user/login.js'></script>
-    <link rel="stylesheet" type="text/css" href="/css/user/login.css" />
 </head>
 <body>
 	<div class='container'>
