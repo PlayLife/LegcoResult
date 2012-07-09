@@ -91,9 +91,9 @@ public class AdminController {
 	protected String user_listRequest(AppUser user, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		LocaleService.resolve(request, response);
 		redirect(request, "", true);
-				
+		
 		JSONObject obj_return = new JSONObject();
-		appUserService.create("", user.getUsername(), user.getEmail(), Type_UserRole.fromString(user.getS_userRole()));
+		appUserService.create("", "", user.getEmail(), Type_UserRole.fromString(user.getS_userRole()));
 		obj_return.put("status", "ok");
 		
 		return obj_return.toString();

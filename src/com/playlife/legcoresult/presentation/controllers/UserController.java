@@ -67,15 +67,11 @@ public class UserController {
 	@ResponseBody
 	protected String create(String username, HttpServletRequest request) {
 		try {
-			AppUser appUser = (AppUser)request.getSession().getAttribute("user");
-			if (appUser != null)
-					throw new PresentationException(-9999);
-			
 			User user = UserServiceFactory.getUserService().getCurrentUser();
 			if (user == null)
 				throw new PresentationException(-9999);
 			
-			appUser = appUserService.getByGoogleUserId(user.getUserId());
+			AppUser appUser = appUserService.getByGoogleUserId(user.getUserId());
 			if (appUser == null || appUser.isDisabled())
 				throw new PresentationException(-9999);
 						

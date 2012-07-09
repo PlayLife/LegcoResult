@@ -36,31 +36,7 @@
 								<div class="controls"><input type="text" class="input-xlarge" id="tb_email" name='email' placeholder="<spring:message code="user.email"/>"/></div>
 							</div>
 						</fieldset>
-						
-						<!-- Password -->
-						<fieldset>
-							<div class="control-group">
-								<label class="control-label" for="tb_password"><spring:message code="user.password"/> : </label>
-								<div class="controls"><input type="password" class="input-xlarge" id="tb_password" name='password' placeholder="<spring:message code="user.password"/>"/></div>
-							</div>
-						</fieldset>
-						
-						<!-- Confirm Password -->
-						<fieldset>
-							<div class="control-group">
-								<label class="control-label" for="tb_confirmpassword"><spring:message code="register.confirmPassword"/> : </label>
-								<div class="controls"><input type="password" class="input-xlarge" id="tb_confirmPassword" placeholder="<spring:message code="register.confirmPassword"/>"/></div>
-							</div>
-						</fieldset>
-						
-						<!-- Username -->
-						<fieldset>				
-							<div class="control-group">
-								<label class="control-label" for="tb_username"><spring:message code="user.username"/> : </label>
-								<div class="controls"><input type="text" class="input-xlarge" id="tb_username" name='username' placeholder="<spring:message code="user.username"/>"/></div>
-							</div>
-						</fieldset>
-						
+												
 						<fieldset>
 							<div id='div_error' class='span6 hide'>
 							</div>
