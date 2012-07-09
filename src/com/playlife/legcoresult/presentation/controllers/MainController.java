@@ -33,7 +33,7 @@ public class MainController {
 		
 		if (action.trim().equalsIgnoreCase("create"))
 			return "create";
-		
+				
 		if (action.trim().equalsIgnoreCase("logout") && user != null){
 			HttpSession session = request.getSession(false);
 			if(session!=null) {
@@ -42,7 +42,6 @@ public class MainController {
 			response.sendRedirect("home");
 			return null;
 		}
-		
 		return "home";
 	}
 }

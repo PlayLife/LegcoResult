@@ -51,6 +51,7 @@ public class UserController {
 		if (appUser == null || appUser.isDisabled())
 			return "user/fail";
 		else {
+			request.getSession(true).setAttribute("user", appUser);
 			if (!appUser.isLogin()){
 				appUser.setGoogleUserId(user.getUserId());
 				model.put("userId", user.getUserId());
@@ -61,7 +62,7 @@ public class UserController {
 				return "home";
 		}
 	}
-	
+		
 	@RequestMapping(value="/modify.json")
 	@ResponseBody
 	protected String create(String username, HttpServletRequest request) {
@@ -85,7 +86,6 @@ public class UserController {
 			JSONObject obj_return = new JSONObject();
 			obj_return.put("user", appUser);
 			obj_return.put("status", "ok");
-			request.getSession(true).setAttribute("user", appUser);
 			return obj_return.toString();
 		} catch (Exception ex){
 			throw new PresentationException(-9999, ex);
