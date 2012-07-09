@@ -1,0 +1,24 @@
+input[type=text], input[type=password] {
+	height : 20px;
+}
+
+.ui-button {
+	margin-top : 20px;
+}
+
+input[type=button]{
+	margin-left: 190px;
+}
+
+#div_error {
+	height : 20px;
+}
+
+td {
+	width : 200px;
+}
+
+#div_error {
+	margin-top : 10px;
+	margin-left : 50px;
+}

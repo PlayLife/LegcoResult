@@ -1,0 +1,55 @@
+body {
+	padding-top: 60px; /* When using the navbar-top-fixed */
+	background : white url(../../img/bootstrap/grid-18px-masked.png) repeat-x 0px 40px;
+}
+
+.red{
+	color: #BF2E23;
+}
+
+.white {
+	color: #ffffff;
+}
+
+.big {
+	font-size : 36px;
+}
+
+.small {
+	font-size : 16px;
+}
+
+.medium {
+	font-size : 20px;
+}
+
+.shadow {
+    -moz-box-shadow:6px 6px 6px #707070; /* Firefox */
+    -webkit-box-shadow:6px 6px 6px #707070;; /* Chrome */
+    box-shadow: 6px 6px 6px #707070; /* IE and Opera */
+}
+
+.round {
+    /* Rounded Corners */
+    -moz-border-radius: 6px; /* Firefox */
+    -webkit-border-radius: 6px; /* Chrome */
+ 	border-radius: 6px; /* IE and Opera */
+}
+
+input:not([type='button']):hover {
+	-moz-box-shadow: 2px 2px 3px #666; /* Firefox */
+	-webkit-box-shadow: 2px 2px 3px #666; /* Chrome */
+	-o-box-shadow: 2px 2px 3px #666; /* Opera */
+	box-shadow: 0 2px 5px #CFCFCF inset; /* IE */
+}
+
+.invisible {
+	display: none;
+}
+
+.div_center {
+	width: 50%;
+    margin: 0px auto;
+    text-align: center;
+    margin-top: 100px;
+}

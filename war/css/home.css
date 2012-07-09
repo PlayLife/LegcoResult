@@ -1,0 +1,17 @@
+.pic_img {
+	width: 180px;
+	height: 180px;
+	margin-bottom: 6px;
+	margin-right: 6px;
+}
+
+.pic_title {
+	position: absolute;
+	left: 10px;
+	top: 10px;
+	padding : 8px;
+}
+
+.pic_div {
+	position: relative;
+}

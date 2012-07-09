@@ -1,0 +1,78 @@
+#div_info img{
+	width: 500px;
+	height: 500px;
+	-moz-box-shadow: 3px 3px 4px #000;
+	-webkit-box-shadow: 3px 3px 4px #000;
+	box-shadow: 3px 3px 4px #000;
+}
+
+#div_info table{
+	position: absolute;
+	color: white;
+	left: 25%;
+	text-align: left;
+}
+
+#div_info td {
+	padding-left : 20px;
+}
+#div_info {
+	position: relative;
+	text-align: center;
+}
+
+#div_like {
+	margin-top : 20px;
+	text-align : center;
+}
+
+textarea {
+	max-width: 250px;
+	max-height: 80px;
+}
+
+#div_comment{
+	margin-top: 50px;
+}
+
+#btn_post {
+	margin-left: 10px;
+}
+
+#div_likeList{
+	height: 20px;
+}
+
+#div_addComment {
+	margin-left: 25%;
+	margin-top: 30px;
+}
+
+#div_commentList {
+	margin-left: 25%;
+	margin-top: 30px;
+	width: 50%;
+}
+
+#div_loadMore {
+	text-align: center;
+	text-decoration: underline;
+	width: 100%;
+	margin-top: 30px;
+}
+
+.commentTitle {
+	width: 100%;
+	text-align: center;
+	text-decoration: underline;
+	font-weight: bold;
+	color: #3399FF;
+}
+
+.comment {
+	
+}
+
+.commentName{
+	color: red;
+}
