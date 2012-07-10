@@ -38,9 +38,9 @@
 						</fieldset>
 												
 						<fieldset>
-							<div id='div_error' class='span6 hide'>
+							<div id='div_error' class='span8 hide'>
 							</div>
-							<button type="submit" class="btn btn-primary btn-large span3 offset8">Create</button>
+							<button type="submit" class="btn btn-primary btn-large span3">Create</button>
 						</fieldset>
 					</form>
 				</div>

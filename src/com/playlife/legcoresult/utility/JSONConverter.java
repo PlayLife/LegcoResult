@@ -93,7 +93,7 @@ public class JSONConverter {
 		obj_return.put("persistence", arr_persistence);
 		obj_return.put("logic", arr_logic);
 		obj_return.put("presentation", arr_presentation);
-		obj_return.put("validator", arr_validator);
+		obj_return.put("validation", arr_validator);
 		obj_return.put("exception", arr_exception);
 		obj_return.put("displayMessage", s_displayMessage);
 		return obj_return;

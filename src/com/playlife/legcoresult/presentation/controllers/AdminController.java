@@ -91,6 +91,7 @@ public class AdminController {
 	protected String user_listRequest(AppUser user, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		LocaleService.resolve(request, response);
 		redirect(request, "", true);
+		appUserValidator.validateEmail(user.getEmail());
 		
 		JSONObject obj_return = new JSONObject();
 		appUserService.create("", "", user.getEmail(), Type_UserRole.fromString(user.getS_userRole()));
@@ -98,7 +99,7 @@ public class AdminController {
 		
 		return obj_return.toString();
 	}
-			
+	
 	@RequestMapping(value="/error/{action}")
 	protected String error_mainRequest(@PathVariable String action, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		LocaleService.resolve(request, response);
@@ -116,9 +117,9 @@ public class AdminController {
 			return path;
 	}
 	
-	@ExceptionHandler(PresentationException.class)
+	@ExceptionHandler(Exception.class)
 	@ResponseBody
-	public String handlerException(HttpServletRequest request, PresentationException ex){
+	public String handlerException(HttpServletRequest request, Exception ex){
 		JSONObject obj_return = new JSONObject();
 		obj_return.put("error", JSONConverter.constructError(ex, messageSource, LocaleService.getLocale(request)));
 		obj_return.put("status", "error");

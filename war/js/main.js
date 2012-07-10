@@ -244,3 +244,21 @@ jQuery.fn.flipContent = function(target){
 		$(target).css({opacity : 0}).removeClass('hide').fadeTo(2000, 1);
 	});
 }
+
+function postToErrorPage(error){
+	var s_persistence = JSON.stringify(error.persistence);
+	var s_logic = JSON.stringify(error.logic);
+	var s_presentation = JSON.stringify(error.presentation);
+	var s_validation = JSON.stringify(error.validation);
+	var s_exception = JSON.stringify(error.exception);
+	var s_displayMessage = JSON.stringify(error.displayMessage);
+	
+	var form = $('<form />').addClass('hide').attr({action: '/error/show', method : 'POST'}).appendTo($('body'));
+	$('<input />').addClass('hide').attr({name : 's_persistence'}).val(s_persistence).appendTo(form);
+	$('<input />').addClass('hide').attr({name : 's_logic'}).val(s_logic).appendTo(form);
+	$('<input />').addClass('hide').attr({name : 's_presentation'}).val(s_presentation).appendTo(form);
+	$('<input />').addClass('hide').attr({name : 's_validation'}).val(s_validation).appendTo(form);
+	$('<input />').addClass('hide').attr({name : 's_exception'}).val(s_exception).appendTo(form);
+	$('<input />').addClass('hide').attr({name : 's_displayMessage'}).val(s_displayMessage).appendTo(form);
+	form.submit();
+}

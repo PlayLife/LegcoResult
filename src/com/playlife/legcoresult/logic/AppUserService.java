@@ -35,6 +35,15 @@ public class AppUserService {
 		}
 	}
 	
+	public boolean checkEmailExists(String email){
+		try {
+			AppUser user = appUserDAO.find_one_byEmail(email);
+			return user != null;
+		} catch (Exception ex){
+			throw new LogicException(-9999, ex);
+		}
+	}
+	
 	public AppUser getByGoogleUserId(String userId){
 		try {
 			return appUserDAO.find_one_byGoogleUserId(userId);
