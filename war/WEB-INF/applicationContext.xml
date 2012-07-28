@@ -66,4 +66,22 @@
 		    	<constructor-arg><value>com.playlife.legcoresult.persistence.domainobjects.AppUser</value></constructor-arg>
 		    </bean></property>
 		</bean>
+		<bean id="attitudeDAO" parent="abstractDao">
+		    <property name="proxyInterfaces"><value>com.playlife.legcoresult.persistence.daos.IAttitudeDAO</value></property>
+		    <property name="target"><bean parent="abstractDaoTarget">
+		    	<constructor-arg><value>com.playlife.legcoresult.persistence.domainobjects.Attitude</value></constructor-arg>
+		    </bean></property>
+		</bean>
+		<bean id="memberDAO" parent="abstractDao">
+		    <property name="proxyInterfaces"><value>com.playlife.legcoresult.persistence.daos.IMemberDAO</value></property>
+		    <property name="target"><bean parent="abstractDaoTarget">
+		    	<constructor-arg><value>com.playlife.legcoresult.persistence.domainobjects.Member</value></constructor-arg>
+		    </bean></property>
+		</bean>
+		<bean id="topicDAO" parent="abstractDao">
+		    <property name="proxyInterfaces"><value>com.playlife.legcoresult.persistence.daos.ITopicDAO</value></property>
+		    <property name="target"><bean parent="abstractDaoTarget">
+		    	<constructor-arg><value>com.playlife.legcoresult.persistence.domainobjects.Topic</value></constructor-arg>
+		    </bean></property>
+		</bean>
 </beans>

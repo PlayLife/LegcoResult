@@ -2,6 +2,8 @@ package com.playlife.legcoresult.persistence.daos.generic;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -164,7 +166,9 @@ public class GenericDAO <T, PK extends Serializable> implements IGenericDAO<T, P
 			}
 			query.declareParameters(declaration);
 			
-			return (List<Object>)query.executeWithMap(map_param);
+			// make the list become read-only so they will be remind that add in this list is pointless.
+			List<Object> resultList =(List<Object>)query.executeWithMap(map_param);
+			return Collections.unmodifiableList(resultList);
 		} catch (Exception ex){
 			throw new PersistenceException(-9999, ex);
 		}
