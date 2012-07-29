@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.playlife.legcoresult.persistence.daos.IAttitudeDAO;
+import com.playlife.legcoresult.persistence.domainobjects.Amendment;
 import com.playlife.legcoresult.persistence.domainobjects.Attitude;
 import com.playlife.legcoresult.persistence.domainobjects.Member;
 import com.playlife.legcoresult.persistence.domainobjects.Person;
@@ -33,6 +34,10 @@ public class AttitudeService {
 
 	public List<Attitude> getByMember(Member member) {
 		return attitudeDAO.find_all_byMemberId(member.getId());
+	}
+	
+	public List<Attitude> getByAmendment(Amendment amendment){
+		return attitudeDAO.find_all_byAmendmentId(amendment.getId());
 	}
 
 	public List<Attitude> getFinalAttitudeByTopic(Topic topic) {

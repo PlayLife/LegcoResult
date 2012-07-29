@@ -55,39 +55,39 @@ public class Amendment {
 	@Autowired
 	private AttitudeService attitudeService;
 
+	public Amendment(Topic topic, Member revisor) {
+		this();
+		setTopic(topic);
+		setRevisor(revisor);
+	}
+
 	private Amendment() {
 		amendmentService.save(this);
 	}
 
-	public Amendment(Topic topic, Member revisor) {
-		this();
-		setTopic(topic,true);
-		setRevisor(revisor,true);
-	}
-
-	public boolean addMemberAttitude(Attitude newAttitude, boolean save) {
+	public boolean addMemberAttitude(Attitude newAttitude) {
 		if (newAttitude == null || newAttitude.getId() == null) return false;
 		if (this.memberAttitudeId.contains(newAttitude.getId())) return true;
-		boolean result = this.memberAttitudeId.add(newAttitude.getId());
-		if (save) amendmentService.save(this);
-		return result;
+		return this.memberAttitudeId.add(newAttitude.getId());
 	}
 
-	public Collection<Attitude> addMemberAttitude(Collection<Attitude> newAttitude,boolean save) {
+	public Collection<Attitude> addMemberAttitude(Collection<Attitude> newAttitude) {
 		Collection<Attitude> failAttitude = new HashSet<Attitude>();
 		for (Attitude attitude : newAttitude) {
-			if (!addMemberAttitude(attitude, false)) {
+			if (!addMemberAttitude(attitude)) {
 				failAttitude.add(attitude);
 			}
 		}
-		if (save) amendmentService.save(this);
 		return failAttitude;
 	}
 
-	public void destoryAmendment(boolean save) {
-		updateStatus(Type_TopicStatus.WAITING,save);
-		getTopic().removeAmendment(this, save);
-		if (save) amendmentService.save(this);
+	public void destoryAmendment() {
+		updateStatus(Type_TopicStatus.WAITING);
+		getTopic().removeAmendment(this);
+		List<Attitude> memberAttitude = getMemberAttitude();
+		for (Attitude attitude : memberAttitude) {
+			attitude.destroyAttitude();
+		}
 	}
 
 	public String getDocUrl() {
@@ -122,57 +122,59 @@ public class Amendment {
 		return status == Type_TopicStatus.PASSED;
 	}
 
-	public void setDocUrl(String docUrl, boolean save) {
+	public boolean removeMemberAttitude(Attitude memberAttitude) {
+		return this.memberAttitudeId.remove(memberAttitude.getId());
+	}
+
+	public void setDocUrl(String docUrl) {
 		this.docUrl = docUrl;
-		if (save) amendmentService.save(this);
 	}
 
-	public void setId(Long id, boolean save) {
+	public void setId(Long id) {
 		this.id = id;
-		if (save) amendmentService.save(this);
 	}
 
-	public void setRevisor(Member revisor, boolean save) {
+	public void setRevisor(Member revisor) {
 		this.revisorId = revisor.getId();
-		if (save) amendmentService.save(this);
 	}
 
-	public void updateStatus(Type_TopicStatus status, boolean save) {
-		updateStatus(status, null,save);
+	public void updateStatus(Type_TopicStatus status) {
+		updateStatus(status, null);
 	}
 
-	public void updateStatus(Type_TopicStatus status, Amendment extraAmendment, boolean save) {
+	public void updateStatus(Type_TopicStatus status, Amendment extraAmendment) {
 		if (this.isPassed() && status != Type_TopicStatus.PASSED) {
-			//correct Status FROM : PASSED TO : OTHERS
+			// correct Status FROM : PASSED TO : OTHERS
 			this.status = status;
-			if (extraAmendment==null){
+			if (extraAmendment == null) {
 				try {
-					throw new IllegalArgumentException("Assume this one as only and last one that was passed before");
+					throw new IllegalArgumentException(
+						"Assume this one as only and last one that was passed before");
 				}
 				catch (IllegalArgumentException iae) {
 					iae.printStackTrace();
 				}
-				extraAmendment=this;
+				extraAmendment = this;
 			}
 			if (amendmentService.hasNextAmendment(this)) {
 				List<Amendment> nextAmendment = amendmentService.getByPreviousAmendment(this);
 				for (Amendment amendment : nextAmendment) {
-					amendment.setPreviousAmendmentId(this.previousAmendmentId,save);
+					amendment.setPreviousAmendmentId(this.previousAmendmentId);
 				}
 			}
 			else {
 				Topic topic = getTopic();
 				if (this.previousAmendmentId == null) {
-					topic.setStatus(status,false);
-					topic.setFinalAmendment(extraAmendment,save);
+					topic.setStatus(status);
+					topic.setFinalAmendment(extraAmendment);
 				}
 				else {
-					topic.setFinalAmendmentId(this.previousAmendmentId,save);
+					topic.setFinalAmendmentId(this.previousAmendmentId);
 				}
 			}
 		}
 		else if (this.status == Type_TopicStatus.FAILED && status == Type_TopicStatus.PASSED) {
-			//correct Status FROM : FAILED TO : PASSED
+			// correct Status FROM : FAILED TO : PASSED
 			this.status = status;
 			Topic topic = getTopic();
 			if (extraAmendment == null) {
@@ -183,18 +185,18 @@ public class Amendment {
 					iae.printStackTrace();
 				}
 				extraAmendment = topic.getFinalAmendment();
-				topic.setFinalAmendment(this,save);
+				topic.setFinalAmendment(this);
 			}
 			if (extraAmendment != null) {
 				List<Amendment> nextAmendment = extraAmendment.getNextAmendment();
 				for (Amendment amendment : nextAmendment) {
-					amendment.setPreviousAmendment(this,save);
+					amendment.setPreviousAmendment(this);
 				}
 			}
 			// REMIND : must update the old next Amentment first,
 			// because after setPreviousAmendment this will appear
 			// in getNextAmendment()
-			setPreviousAmendment(extraAmendment,false);
+			setPreviousAmendment(extraAmendment);
 		}
 		else if (this.status == Type_TopicStatus.WAITING) {
 			if (extraAmendment != null) {
@@ -206,15 +208,13 @@ public class Amendment {
 					iae.printStackTrace();
 				}
 			}
-			setStatus(status, false);
+			setStatus(status);
 		}
-		if (save) amendmentService.save(this);
 	}
 
-	private void setPreviousAmendment(Amendment previousAmendment, boolean save) {
+	private void setPreviousAmendment(Amendment previousAmendment) {
 		if (previousAmendment == null) {
 			this.previousAmendmentId = null;
-			if (save) amendmentService.save(this);
 			return;
 		}
 		if (previousAmendment.status != Type_TopicStatus.PASSED) {
@@ -233,45 +233,44 @@ public class Amendment {
 			catch (IllegalArgumentException iae) {
 				iae.printStackTrace();
 			}
-			return ;
+			return;
 		}
 		this.previousAmendmentId = previousAmendment.id;
-		if (save) amendmentService.save(this);
 	}
 
-	private void setPreviousAmendmentId(Long previousAmendmentId, boolean save) {
+	private void setPreviousAmendmentId(Long previousAmendmentId) {
 		if (previousAmendmentId != null) {
-			setPreviousAmendment(amendmentService.getById(previousAmendmentId),save);
+			setPreviousAmendment(amendmentService.getById(previousAmendmentId));
 		}
 		else {
 			this.previousAmendmentId = null;
-			if (save) amendmentService.save(this);
 		}
 	}
 
-	private void setStatus(Type_TopicStatus status, boolean save) {
+	private void setStatus(Type_TopicStatus status) {
 		this.status = status;
 		Topic topic = getTopic();
 
 		if (status != Type_TopicStatus.WAITING) {
-			setPreviousAmendment(topic.getFinalAmendment(),save);
+			setPreviousAmendment(topic.getFinalAmendment());
 		}
 
 		if (this.isPassed() || !topic.isPassed()) {
-			topic.setFinalAmendment(this,save);
+			topic.setFinalAmendment(this);
 		}
-		if (save) amendmentService.save(this);
 	}
 
-	private void setTopic(Topic topic, boolean save) {
+	private void setTopic(Topic topic) {
 		this.topicId = topic.getId();
-		topic.addAmendment(this,save);
-		if (save) amendmentService.save(this);
+		topic.addAmendment(this);
 	}
 
-	void updateMemberFinalAttitude(Long oldAmendment) {
+	void updateMemberFinalAttitude(Long oldAmendmentId) {
 		// TODO update member that hold the lastAttitude from the old
 		// amendment to this amendment
-
+		List<Attitude> memberAttitude = attitudeService.getByAmendment(this);
+		for (Attitude attitude : memberAttitude) {
+			attitude.updateMemberFinalTopicAttitude(oldAmendmentId);
+		}
 	}
 }

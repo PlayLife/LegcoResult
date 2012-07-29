@@ -50,32 +50,29 @@ public class Topic {
 	@Autowired
 	private MemberService memberService;
 
-	private Topic(){
+	private Topic() {
 		topicService.save(this);
 	}
-	
+
 	public Topic(String title, Member initiator) {
 		this();
-		this.setTitle(title,false);
-		this.setInitiator(initiator,true);
+		this.setTitle(title);
+		this.setInitiator(initiator);
 	}
 
-	public boolean addAmendment(Amendment newAmendment, boolean save) {
+	public boolean addAmendment(Amendment newAmendment) {
 		if (newAmendment == null || newAmendment.getId() == null) return false;
 		if (this.amendmentId.contains(newAmendment.getId())) return true;
-		boolean result = this.amendmentId.add(newAmendment.getId());
-		if (save) topicService.save(this);
-		return result;
+		return this.amendmentId.add(newAmendment.getId());
 	}
 
-	public Collection<Amendment> addAmendment(Collection<Amendment> newAmendment, boolean save) {
+	public Collection<Amendment> addAmendment(Collection<Amendment> newAmendment) {
 		Collection<Amendment> failAmendment = new HashSet<Amendment>();
 		for (Amendment amendment : newAmendment) {
-			if (!addAmendment(amendment,false)) {
+			if (!addAmendment(amendment)) {
 				failAmendment.add(amendment);
 			}
 		}
-		if (save) topicService.save(this);
 		return failAmendment;
 	}
 
@@ -115,51 +112,46 @@ public class Topic {
 		return status == Type_TopicStatus.PASSED;
 	}
 
-	public boolean removeAmendment(Amendment removeAmendment, boolean save){
-		boolean result = this.amendmentId.remove(removeAmendment.getId());
-		if (save) topicService.save(this);
-		return result;
+	public boolean removeAmendment(Amendment removeAmendment) {
+		return this.amendmentId.remove(removeAmendment.getId());
 	}
 
-	public void setId(Long id, boolean save) {
+	public void setId(Long id) {
 		this.id = id;
-		if (save) topicService.save(this);
 	}
 
-	public void setInitiator(Member initiator, boolean save) {
+	public void setInitiator(Member initiator) {
 		this.initiatorId = initiator.getId();
-		if (save) topicService.save(this);
 	}
 
-	public void setTitle(String title, boolean save) {
+	public void setTitle(String title) {
 		this.title = title;
-		if (save) topicService.save(this);
 	}
 
 	Type_TopicStatus getStatus() {
 		return status;
 	}
 
-	void setFinalAmendment(Amendment finalAmendment, boolean save) {
+	void setFinalAmendment(Amendment finalAmendment) {
 		if (isPassed() && !finalAmendment.isPassed()) return;
-		this.setStatus(finalAmendment.getStatus(), false);
+		this.setStatus(finalAmendment.getStatus());
 		finalAmendment.updateMemberFinalAttitude(this.finalAmendmentId);
 		this.finalAmendmentId = finalAmendment.getId();
-		if (save) topicService.save(this);
 	}
 
-	void setFinalAmendmentId(Long finalAmendmentId, boolean save) {
-		setFinalAmendment(amendmentService.getById(finalAmendmentId), save);
+	void setFinalAmendmentId(Long finalAmendmentId) {
+		setFinalAmendment(amendmentService.getById(finalAmendmentId));
 	}
-	
-	void setStatus(Type_TopicStatus status, boolean save) {
+
+	void setStatus(Type_TopicStatus status) {
 		this.status = status;
-		if (save) topicService.save(this);
 	}
-	public Long getFinalAmendmentId(){
+
+	public Long getFinalAmendmentId() {
 		return this.finalAmendmentId;
 	}
-	public Set<Long> getAmendmentId(){
+
+	public Set<Long> getAmendmentId() {
 		return Collections.unmodifiableSet(this.amendmentId);
 	}
 }

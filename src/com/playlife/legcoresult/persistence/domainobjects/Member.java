@@ -10,6 +10,10 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.playlife.legcoresult.logic.PersonService;
+
 @PersistenceCapable (identityType = IdentityType.APPLICATION, detachable = "true")
 public class Member {
 	/********************************
@@ -33,6 +37,9 @@ public class Member {
 
 	@Persistent (defaultFetchGroup = "true")
 	private Set<Long> amendmentAttitude = new HashSet<Long>();
+
+	@Autowired
+	private PersonService personService;
 
 	public Long getId() {
 		return id;
@@ -58,12 +65,13 @@ public class Member {
 		this.endDate = endDate;
 	}
 
-	public Long getPerson() {
-		return personId;
+	public Person getPerson() {
+		return personService.getById(personId);
 	}
 
-	public void setPerson(Long person) {
-		this.personId = person;
+	public void setPerson(Person person) {
+		this.personId = person.getId();
+		person.addMember(this);
 	}
 
 	public Long getCommittee() {
@@ -74,17 +82,18 @@ public class Member {
 		this.committeeId = committee;
 	}
 
-	public void addAttitude(Attitude attitude) {
-		if (!amendmentAttitude.contains(attitude.getId())) {
-			amendmentAttitude.add(attitude.getId());
-		}
+	boolean addAmendmentAttitude(Attitude attitude) {
+		if (attitude == null) return false;
+		if (amendmentAttitude.contains(attitude.getId())) return true;
+		return amendmentAttitude.add(attitude.getId());
+
 	}
 
-	public boolean removeAttitude(Attitude attitude) {
+	public boolean removeAmendmentAttitude(Attitude attitude) {
 		return amendmentAttitude.remove(attitude.getId());
 	}
-	
-	void updateFinalTopicAttitude(Long oldAmendmentId, Long newAttitudeId){
-		
+
+	void updateFinalTopicAttitude(Long oldAmendmentId, Attitude newAttitude) {
+		personService.getById(personId).updateAmendmentFinalAttitude(oldAmendmentId, newAttitude.getId());
 	}
 }

@@ -8,6 +8,7 @@ import javax.jdo.annotations.PrimaryKey;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.playlife.legcoresult.logic.AmendmentService;
 import com.playlife.legcoresult.logic.AttitudeService;
 import com.playlife.legcoresult.logic.MemberService;
 
@@ -37,43 +38,59 @@ public class Attitude {
 	private AttitudeService attitudeService;
 	@Autowired
 	private MemberService memberService;
+	@Autowired
+	private AmendmentService amendmentService;
 
-	private Attitude(){
-		attitudeService.save(this);
-	}
 	public Attitude(Amendment amendment, Member member) {
 		this();
-		setMember(member, true);
-		setAmendment(amendment, true);
+		setMember(member);
+		setAmendment(amendment);
 	}
 
-	public Long getId() {
-		return id;
+	private Attitude() {
+		attitudeService.save(this);
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public Amendment getAmendment() {
+		return amendmentService.getById(amendmentId);
 	}
 
 	public Decision getDecide() {
 		return decide;
 	}
 
+	public Long getId() {
+		return id;
+	}
+
+	public Member getMember() {
+		return memberService.getById(memberId);
+	}
+
 	public void setDecide(Decision decide) {
 		this.decide = decide;
 	}
 
-	private void setMember(Member member, boolean save) {
-		this.memberId = member.getId();
+	public void setId(Long id) {
+		this.id = id;
 	}
 
-	private void setAmendment(Amendment amendment, boolean save) {
+	private void setAmendment(Amendment amendment) {
 		this.amendmentId = amendment.getId();
-		amendment.addMemberAttitude(this, save);
-		if (save) attitudeService.save(this);
+		amendment.addMemberAttitude(this);
 	}
-	
-	void updateMemberFinalTopicAttitude(Long oldAmendment){
-		memberService.getById(memberId).updateFinalTopicAttitude(oldAmendment, getId());
+
+	private void setMember(Member member) {
+		this.memberId = member.getId();
+		member.addAmendmentAttitude(this);
+	}
+
+	void destroyAttitude() {
+		getAmendment().removeMemberAttitude(this);
+		getMember().removeAmendmentAttitude(this);
+	}
+
+	void updateMemberFinalTopicAttitude(Long oldAmendment) {
+		getMember().updateFinalTopicAttitude(oldAmendment, this);
 	}
 }
