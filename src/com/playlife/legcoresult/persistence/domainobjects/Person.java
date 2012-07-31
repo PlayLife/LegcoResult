@@ -14,9 +14,9 @@ import javax.jdo.annotations.PrimaryKey;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.playlife.legcoresult.logic.AttitudeService;
-import com.playlife.legcoresult.logic.MemberService;
+import com.playlife.legcoresult.logic.CommitteeService;
 
-@PersistenceCapable (identityType = IdentityType.APPLICATION, detachable = "true")
+@PersistenceCapable (identityType = IdentityType.APPLICATION)
 public class Person {
 	/********************************
 	 * * DB Field * *
@@ -28,17 +28,17 @@ public class Person {
 	@Persistent (defaultFetchGroup = "true")
 	private Set<Long> finalAmendmentAttitudeId = new HashSet<Long>();
 	@Persistent (defaultFetchGroup = "true")
-	private Set<Long> memberId = new HashSet<Long>();
+	private Set<Long> committeeId = new HashSet<Long>();
 
 	@Autowired
 	private AttitudeService attitudeService;
 	@Autowired
-	private MemberService memberService;
+	private CommitteeService memberService;
 
-	public boolean addMember(Member member) {
-		if (member == null) return false;
-		if (memberId.contains(member.getId())) return true;
-		return memberId.add(member.getId());
+	public boolean addCommittee(Committee committee) {
+		if (committee == null) return false;
+		if (committeeId.contains(committee.getId())) return true;
+		return committeeId.add(committee.getId());
 	}
 
 	public List<Attitude> getFinalAmendmentAttitude() {
@@ -49,12 +49,12 @@ public class Person {
 		return id;
 	}
 
-	public List<Member> getMember() {
-		return memberService.getById(memberId);
+	public List<Committee> getCommittee() {
+		return memberService.getById(committeeId);
 	}
 
-	public Set<Long> getMemberId() {
-		return Collections.unmodifiableSet(this.memberId);
+	public Set<Long> getCommitteeId() {
+		return Collections.unmodifiableSet(this.committeeId);
 	}
 
 	public void setId(Long id) {

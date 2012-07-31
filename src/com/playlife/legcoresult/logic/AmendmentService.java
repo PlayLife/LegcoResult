@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.playlife.legcoresult.persistence.daos.IAmendmentDAO;
 import com.playlife.legcoresult.persistence.domainobjects.Amendment;
-import com.playlife.legcoresult.persistence.domainobjects.Topic;
+import com.playlife.legcoresult.persistence.domainobjects.Counsel;
 
 public class AmendmentService {
 
@@ -19,8 +19,8 @@ public class AmendmentService {
 		return amendmentDAO.get(id);
 	}
 
-	public List<Amendment> getByTopic(Topic topic){
-		return amendmentDAO.find_all_byTopic(topic.getId());
+	public List<Amendment> getByCounsel(Counsel counsel){
+		return amendmentDAO.find_all_byCounsel(counsel.getId());
 	}
 	
 	public List<Amendment> getById(Collection<Long> amendmentId){
@@ -34,8 +34,8 @@ public class AmendmentService {
 	public boolean hasNextAmendment(Amendment amendment){
 		return !getByPreviousAmendment(amendment).isEmpty();
 	}
-	
-	public Amendment save(Amendment amendment){
+
+	public Amendment save(Amendment amendment) {
 		return amendmentDAO.save(amendment);
 	}
 }

@@ -11,9 +11,9 @@ import org.springframework.stereotype.Component;
 import com.playlife.legcoresult.persistence.daos.IAttitudeDAO;
 import com.playlife.legcoresult.persistence.domainobjects.Amendment;
 import com.playlife.legcoresult.persistence.domainobjects.Attitude;
-import com.playlife.legcoresult.persistence.domainobjects.Member;
+import com.playlife.legcoresult.persistence.domainobjects.Committee;
 import com.playlife.legcoresult.persistence.domainobjects.Person;
-import com.playlife.legcoresult.persistence.domainobjects.Topic;
+import com.playlife.legcoresult.persistence.domainobjects.Counsel;
 
 @Component
 public class AttitudeService {
@@ -32,24 +32,24 @@ public class AttitudeService {
 		return attitudeDAO.find_all(new ArrayList<Long>(id));
 	}
 
-	public List<Attitude> getByMember(Member member) {
-		return attitudeDAO.find_all_byMemberId(member.getId());
+	public List<Attitude> getByCommittee(Committee counsel) {
+		return attitudeDAO.find_all_byCommitteeId(counsel.getId());
 	}
 	
 	public List<Attitude> getByAmendment(Amendment amendment){
 		return attitudeDAO.find_all_byAmendmentId(amendment.getId());
 	}
 
-	public List<Attitude> getFinalAttitudeByTopic(Topic topic) {
-		return attitudeDAO.find_all_byAmendmentId(topic.getFinalAmendmentId());
+	public List<Attitude> getFinalAttitudeByCounsel(Counsel counsel) {
+		return attitudeDAO.find_all_byAmendmentId(counsel.getFinalAmendmentId());
 	}
 
-	public List<Attitude> getByTopic(Topic topic) {
-		return attitudeDAO.find_all_byAmendmentId(new ArrayList<Long>(topic.getAmendmentId()));
+	public List<Attitude> getByCounsel(Counsel counsel) {
+		return attitudeDAO.find_all_byAmendmentId(new ArrayList<Long>(counsel.getAmendmentId()));
 	}
 	
 	public Attitude getByAmendmentIdAndPerson(Long amendmentId, Person person){
-		return attitudeDAO.find_one_byAmendmentIdAndMemberId(amendmentId, new ArrayList<Long>(person.getMemberId()));
+		return attitudeDAO.find_one_byAmendmentIdAndCommitteeId(amendmentId, new ArrayList<Long>(person.getCommitteeId()));
 	}
 	
 	public void save(Attitude attitude){

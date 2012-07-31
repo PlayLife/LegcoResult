@@ -15,12 +15,12 @@ import javax.jdo.annotations.PrimaryKey;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.playlife.legcoresult.logic.AmendmentService;
-import com.playlife.legcoresult.logic.MemberService;
-import com.playlife.legcoresult.logic.TopicService;
+import com.playlife.legcoresult.logic.CommitteeService;
+import com.playlife.legcoresult.logic.CounselService;
 import com.playlife.legcoresult.utility.PersistenceException;
 
 @PersistenceCapable (identityType = IdentityType.APPLICATION)
-public class Topic {
+public class Counsel {
 	/********************************
 	 * * DB Field * *
 	 ********************************/
@@ -44,17 +44,17 @@ public class Topic {
 	private Set<Long> amendmentId = new HashSet<Long>();
 
 	@Autowired
-	private TopicService topicService;
+	private CounselService counselService;
 	@Autowired
 	private AmendmentService amendmentService;
 	@Autowired
-	private MemberService memberService;
+	private CommitteeService committeeService;
 
-	private Topic() {
-		topicService.save(this);
+	private Counsel() {
+		counselService.save(this);
 	}
 
-	public Topic(String title, Member initiator) {
+	public Counsel(String title, Committee initiator) {
 		this();
 		this.setTitle(title);
 		this.setInitiator(initiator);
@@ -77,7 +77,7 @@ public class Topic {
 	}
 
 	public List<Amendment> getAmendment() {
-		return amendmentService.getByTopic(this);
+		return amendmentService.getByCounsel(this);
 	}
 
 	public Amendment getFinalAmendment() {
@@ -93,15 +93,15 @@ public class Topic {
 	}
 
 	public List<Attitude> getFinalAttitude() {
-		return amendmentService.getById(finalAmendmentId).getMemberAttitude();
+		return amendmentService.getById(finalAmendmentId).getCommitteeAttitude();
 	}
 
 	public Long getId() {
 		return id;
 	}
 
-	public Member getInitiator() {
-		return memberService.getById(initiatorId);
+	public Committee getInitiator() {
+		return committeeService.getById(initiatorId);
 	}
 
 	public String getTitle() {
@@ -120,7 +120,7 @@ public class Topic {
 		this.id = id;
 	}
 
-	public void setInitiator(Member initiator) {
+	public void setInitiator(Committee initiator) {
 		this.initiatorId = initiator.getId();
 	}
 
@@ -135,7 +135,7 @@ public class Topic {
 	void setFinalAmendment(Amendment finalAmendment) {
 		if (isPassed() && !finalAmendment.isPassed()) return;
 		this.setStatus(finalAmendment.getStatus());
-		finalAmendment.updateMemberFinalAttitude(this.finalAmendmentId);
+		finalAmendment.updateCommitteeFinalAttitude(this.finalAmendmentId);
 		this.finalAmendmentId = finalAmendment.getId();
 	}
 

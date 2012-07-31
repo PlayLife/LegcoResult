@@ -15,9 +15,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.playlife.legcoresult.logic.AmendmentService;
 import com.playlife.legcoresult.logic.AttitudeService;
-import com.playlife.legcoresult.logic.MemberService;
-import com.playlife.legcoresult.logic.TopicService;
+import com.playlife.legcoresult.logic.CommitteeService;
+import com.playlife.legcoresult.logic.CounselService;
 
+/**
+ * @author Razgriz
+ *
+ */
+/**
+ * @author Razgriz
+ *
+ */
 @PersistenceCapable (identityType = IdentityType.APPLICATION)
 public class Amendment {
 
@@ -26,7 +34,7 @@ public class Amendment {
 	private Long id;
 
 	@Persistent
-	private Long topicId;
+	private Long counselId;
 
 	@Persistent
 	private Long previousAmendmentId;
@@ -41,23 +49,23 @@ public class Amendment {
 	private String docUrl;
 
 	@Persistent (defaultFetchGroup = "true")
-	private Set<Long> memberAttitudeId = new HashSet<Long>();
+	private Set<Long> committeeAttitudeId = new HashSet<Long>();
 
 	@Autowired
-	private TopicService topicService;
+	private CounselService counselService;
 
 	@Autowired
 	private AmendmentService amendmentService;
 
 	@Autowired
-	private MemberService memberService;
+	private CommitteeService committeeService;
 
 	@Autowired
 	private AttitudeService attitudeService;
 
-	public Amendment(Topic topic, Member revisor) {
+	public Amendment(Counsel counsel, Committee revisor) {
 		this();
-		setTopic(topic);
+		setCounsel(counsel);
 		setRevisor(revisor);
 	}
 
@@ -65,16 +73,16 @@ public class Amendment {
 		amendmentService.save(this);
 	}
 
-	public boolean addMemberAttitude(Attitude newAttitude) {
+	public boolean addCommitteeAttitude(Attitude newAttitude) {
 		if (newAttitude == null || newAttitude.getId() == null) return false;
-		if (this.memberAttitudeId.contains(newAttitude.getId())) return true;
-		return this.memberAttitudeId.add(newAttitude.getId());
+		if (this.committeeAttitudeId.contains(newAttitude.getId())) return true;
+		return this.committeeAttitudeId.add(newAttitude.getId());
 	}
 
-	public Collection<Attitude> addMemberAttitude(Collection<Attitude> newAttitude) {
+	public Collection<Attitude> addCommitteeAttitude(Collection<Attitude> newAttitude) {
 		Collection<Attitude> failAttitude = new HashSet<Attitude>();
 		for (Attitude attitude : newAttitude) {
-			if (!addMemberAttitude(attitude)) {
+			if (!addCommitteeAttitude(attitude)) {
 				failAttitude.add(attitude);
 			}
 		}
@@ -83,9 +91,9 @@ public class Amendment {
 
 	public void destoryAmendment() {
 		updateStatus(Type_TopicStatus.WAITING);
-		getTopic().removeAmendment(this);
-		List<Attitude> memberAttitude = getMemberAttitude();
-		for (Attitude attitude : memberAttitude) {
+		getCounsel().removeAmendment(this);
+		List<Attitude> committeeAttitude = getCommitteeAttitude();
+		for (Attitude attitude : committeeAttitude) {
 			attitude.destroyAttitude();
 		}
 	}
@@ -98,32 +106,32 @@ public class Amendment {
 		return id;
 	}
 
-	public List<Attitude> getMemberAttitude() {
-		return attitudeService.getById(this.memberAttitudeId);
+	public List<Attitude> getCommitteeAttitude() {
+		return attitudeService.getById(this.committeeAttitudeId);
 	}
 
 	public List<Amendment> getNextAmendment() {
 		return amendmentService.getByPreviousAmendment(this);
 	}
 
-	public Member getRevisor() {
-		return memberService.getById(revisorId);
+	public Committee getRevisor() {
+		return committeeService.getById(revisorId);
 	}
 
 	public Type_TopicStatus getStatus() {
 		return status;
 	}
 
-	public Topic getTopic() {
-		return topicService.getById(topicId);
+	public Counsel getCounsel() {
+		return counselService.getById(counselId);
 	}
 
 	public boolean isPassed() {
 		return status == Type_TopicStatus.PASSED;
 	}
 
-	public boolean removeMemberAttitude(Attitude memberAttitude) {
-		return this.memberAttitudeId.remove(memberAttitude.getId());
+	public boolean removeCommitteeAttitude(Attitude committeeAttitude) {
+		return this.committeeAttitudeId.remove(committeeAttitude.getId());
 	}
 
 	public void setDocUrl(String docUrl) {
@@ -134,28 +142,21 @@ public class Amendment {
 		this.id = id;
 	}
 
-	public void setRevisor(Member revisor) {
+	public void setRevisor(Committee revisor) {
 		this.revisorId = revisor.getId();
 	}
 
 	public void updateStatus(Type_TopicStatus status) {
 		updateStatus(status, null);
 	}
-
+	
+	/**
+	 * @param extraAmendment only need when change from fail to pass to set the previous amendment for this.
+	 */
 	public void updateStatus(Type_TopicStatus status, Amendment extraAmendment) {
 		if (this.isPassed() && status != Type_TopicStatus.PASSED) {
 			// correct Status FROM : PASSED TO : OTHERS
 			this.status = status;
-			if (extraAmendment == null) {
-				try {
-					throw new IllegalArgumentException(
-						"Assume this one as only and last one that was passed before");
-				}
-				catch (IllegalArgumentException iae) {
-					iae.printStackTrace();
-				}
-				extraAmendment = this;
-			}
 			if (amendmentService.hasNextAmendment(this)) {
 				List<Amendment> nextAmendment = amendmentService.getByPreviousAmendment(this);
 				for (Amendment amendment : nextAmendment) {
@@ -163,10 +164,10 @@ public class Amendment {
 				}
 			}
 			else {
-				Topic topic = getTopic();
+				Counsel topic = getCounsel();
 				if (this.previousAmendmentId == null) {
 					topic.setStatus(status);
-					topic.setFinalAmendment(extraAmendment);
+					topic.setFinalAmendmentId(this.id);
 				}
 				else {
 					topic.setFinalAmendmentId(this.previousAmendmentId);
@@ -176,7 +177,7 @@ public class Amendment {
 		else if (this.status == Type_TopicStatus.FAILED && status == Type_TopicStatus.PASSED) {
 			// correct Status FROM : FAILED TO : PASSED
 			this.status = status;
-			Topic topic = getTopic();
+			Counsel topic = getCounsel();
 			if (extraAmendment == null) {
 				try {
 					throw new IllegalArgumentException("Assume this one as the last amendment to be passed");
@@ -249,7 +250,7 @@ public class Amendment {
 
 	private void setStatus(Type_TopicStatus status) {
 		this.status = status;
-		Topic topic = getTopic();
+		Counsel topic = getCounsel();
 
 		if (status != Type_TopicStatus.WAITING) {
 			setPreviousAmendment(topic.getFinalAmendment());
@@ -260,17 +261,17 @@ public class Amendment {
 		}
 	}
 
-	private void setTopic(Topic topic) {
-		this.topicId = topic.getId();
-		topic.addAmendment(this);
+	private void setCounsel(Counsel counsel) {
+		this.counselId = counsel.getId();
+		counsel.addAmendment(this);
 	}
 
-	void updateMemberFinalAttitude(Long oldAmendmentId) {
+	void updateCommitteeFinalAttitude(Long oldAmendmentId) {
 		// TODO update member that hold the lastAttitude from the old
 		// amendment to this amendment
 		List<Attitude> memberAttitude = attitudeService.getByAmendment(this);
 		for (Attitude attitude : memberAttitude) {
-			attitude.updateMemberFinalTopicAttitude(oldAmendmentId);
+			attitude.updateCommitteeFinalCounselAttitude(oldAmendmentId);
 		}
 	}
 }

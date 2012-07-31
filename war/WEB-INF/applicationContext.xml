@@ -72,16 +72,28 @@
 		    	<constructor-arg><value>com.playlife.legcoresult.persistence.domainobjects.Attitude</value></constructor-arg>
 		    </bean></property>
 		</bean>
-		<bean id="memberDAO" parent="abstractDao">
-		    <property name="proxyInterfaces"><value>com.playlife.legcoresult.persistence.daos.IMemberDAO</value></property>
+		<bean id="committeeDAO" parent="abstractDao">
+		    <property name="proxyInterfaces"><value>com.playlife.legcoresult.persistence.daos.ICommitteeDAO</value></property>
 		    <property name="target"><bean parent="abstractDaoTarget">
-		    	<constructor-arg><value>com.playlife.legcoresult.persistence.domainobjects.Member</value></constructor-arg>
+		    	<constructor-arg><value>com.playlife.legcoresult.persistence.domainobjects.Committee</value></constructor-arg>
 		    </bean></property>
 		</bean>
-		<bean id="topicDAO" parent="abstractDao">
-		    <property name="proxyInterfaces"><value>com.playlife.legcoresult.persistence.daos.ITopicDAO</value></property>
+		<bean id="counselDAO" parent="abstractDao">
+		    <property name="proxyInterfaces"><value>com.playlife.legcoresult.persistence.daos.ICounselDAO</value></property>
 		    <property name="target"><bean parent="abstractDaoTarget">
-		    	<constructor-arg><value>com.playlife.legcoresult.persistence.domainobjects.Topic</value></constructor-arg>
+		    	<constructor-arg><value>com.playlife.legcoresult.persistence.domainobjects.Counsel</value></constructor-arg>
+		    </bean></property>
+		</bean>
+		<bean id="amendmentDAO" parent="abstractDao">
+		    <property name="proxyInterfaces"><value>com.playlife.legcoresult.persistence.daos.IAmendmentDAO</value></property>
+		    <property name="target"><bean parent="abstractDaoTarget">
+		    	<constructor-arg><value>com.playlife.legcoresult.persistence.domainobjects.Amendment</value></constructor-arg>
+		    </bean></property>
+		</bean>
+		<bean id="personDAO" parent="abstractDao">
+		    <property name="proxyInterfaces"><value>com.playlife.legcoresult.persistence.daos.IPersonDAO</value></property>
+		    <property name="target"><bean parent="abstractDaoTarget">
+		    	<constructor-arg><value>com.playlife.legcoresult.persistence.domainobjects.Person</value></constructor-arg>
 		    </bean></property>
 		</bean>
 </beans>

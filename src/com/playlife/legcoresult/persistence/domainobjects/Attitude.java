@@ -10,14 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.playlife.legcoresult.logic.AmendmentService;
 import com.playlife.legcoresult.logic.AttitudeService;
-import com.playlife.legcoresult.logic.MemberService;
+import com.playlife.legcoresult.logic.CommitteeService;
 
 @PersistenceCapable (identityType = IdentityType.APPLICATION)
 public class Attitude {
-	public enum Decision {
-		AGAINST, FOR, ABSENT, GIVEUP, NONE;
-	};
-
 	/*
 	 * DB Field
 	 */
@@ -26,10 +22,10 @@ public class Attitude {
 	private Long id;
 
 	@Persistent
-	private Decision decide;
+	private Type_AttitudeDecision decide;
 
 	@Persistent (defaultFetchGroup = "true")
-	private Long memberId;
+	private Long committeeId;
 
 	@Persistent (defaultFetchGroup = "true")
 	private Long amendmentId;
@@ -37,13 +33,13 @@ public class Attitude {
 	@Autowired
 	private AttitudeService attitudeService;
 	@Autowired
-	private MemberService memberService;
+	private CommitteeService committeeService;
 	@Autowired
 	private AmendmentService amendmentService;
 
-	public Attitude(Amendment amendment, Member member) {
+	public Attitude(Amendment amendment, Committee committee) {
 		this();
-		setMember(member);
+		setCommittee(committee);
 		setAmendment(amendment);
 	}
 
@@ -55,7 +51,7 @@ public class Attitude {
 		return amendmentService.getById(amendmentId);
 	}
 
-	public Decision getDecide() {
+	public Type_AttitudeDecision getDecide() {
 		return decide;
 	}
 
@@ -63,11 +59,11 @@ public class Attitude {
 		return id;
 	}
 
-	public Member getMember() {
-		return memberService.getById(memberId);
+	public Committee getCommittee() {
+		return committeeService.getById(committeeId);
 	}
 
-	public void setDecide(Decision decide) {
+	public void setDecide(Type_AttitudeDecision decide) {
 		this.decide = decide;
 	}
 
@@ -77,20 +73,20 @@ public class Attitude {
 
 	private void setAmendment(Amendment amendment) {
 		this.amendmentId = amendment.getId();
-		amendment.addMemberAttitude(this);
+		amendment.addCommitteeAttitude(this);
 	}
 
-	private void setMember(Member member) {
-		this.memberId = member.getId();
+	private void setCommittee(Committee member) {
+		this.committeeId = member.getId();
 		member.addAmendmentAttitude(this);
 	}
 
 	void destroyAttitude() {
-		getAmendment().removeMemberAttitude(this);
-		getMember().removeAmendmentAttitude(this);
+		getAmendment().removeCommitteeAttitude(this);
+		getCommittee().removeAmendmentAttitude(this);
 	}
 
-	void updateMemberFinalTopicAttitude(Long oldAmendment) {
-		getMember().updateFinalTopicAttitude(oldAmendment, this);
+	void updateCommitteeFinalCounselAttitude(Long oldAmendment) {
+		getCommittee().updateFinalCounselAttitude(oldAmendment, this);
 	}
 }

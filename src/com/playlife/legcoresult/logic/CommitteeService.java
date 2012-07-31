@@ -8,21 +8,21 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.playlife.legcoresult.persistence.daos.IMemberDAO;
-import com.playlife.legcoresult.persistence.domainobjects.Member;
+import com.playlife.legcoresult.persistence.daos.ICommitteeDAO;
+import com.playlife.legcoresult.persistence.domainobjects.Committee;
 
 @Component
-public class MemberService {
+public class CommitteeService {
 	@Autowired
-	IMemberDAO memberDAO;
+	ICommitteeDAO memberDAO;
 
-	public Member getById(Long id){
+	public Committee getById(Long id){
 		return memberDAO.get(id);
 	}
-	public List<Member> getById(Long... id){
+	public List<Committee> getById(Long... id){
 		return memberDAO.find_all(Arrays.asList(id));
 	}
-	public List<Member >getById(Collection<Long> id){
+	public List<Committee >getById(Collection<Long> id){
 		return memberDAO.find_all(new ArrayList<Long>(id));
 	}
 }
