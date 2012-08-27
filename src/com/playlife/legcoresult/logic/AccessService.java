@@ -1,6 +1,5 @@
 package com.playlife.legcoresult.logic;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,11 +11,12 @@ import com.playlife.legcoresult.utility.LogicException;
 public class AccessService {
 	@Autowired
 	IAppUserDAO appUserDAO;
-	
-	public AppUser getUser(AppUser user){
+
+	public AppUser getUser(AppUser user) {
 		try {
 			return appUserDAO.get(user.getUserId());
-		} catch (Exception ex){
+		}
+		catch (Exception ex) {
 			throw new LogicException(-9999, ex);
 		}
 	}

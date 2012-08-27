@@ -14,15 +14,21 @@ import com.playlife.legcoresult.persistence.domainobjects.Committee;
 @Component
 public class CommitteeService {
 	@Autowired
-	ICommitteeDAO memberDAO;
+	ICommitteeDAO committeeDAO;
 
-	public Committee getById(Long id){
-		return memberDAO.get(id);
+	public List<Committee> getById(Collection<Long> id) {
+		return committeeDAO.find_all(new ArrayList<Long>(id));
 	}
-	public List<Committee> getById(Long... id){
-		return memberDAO.find_all(Arrays.asList(id));
+
+	public Committee getById(Long id) {
+		return committeeDAO.get(id);
 	}
-	public List<Committee >getById(Collection<Long> id){
-		return memberDAO.find_all(new ArrayList<Long>(id));
+
+	public List<Committee> getById(Long... id) {
+		return committeeDAO.find_all(Arrays.asList(id));
+	}
+
+	public void save(Committee committee) {
+		committeeDAO.save(committee);
 	}
 }

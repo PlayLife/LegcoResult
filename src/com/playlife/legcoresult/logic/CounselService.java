@@ -1,5 +1,9 @@
 package com.playlife.legcoresult.logic;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +17,10 @@ public class CounselService {
 
 	public Counsel getById(Long id) {
 		return counselDAO.get(id);
+	}
+	
+	public List<Counsel> getById(Collection<Long> id){
+		return counselDAO.find_all(new ArrayList<Long>(id));
 	}
 
 	public void save(Counsel counsel) {

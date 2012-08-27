@@ -13,8 +13,8 @@ import javax.jdo.annotations.PrimaryKey;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.playlife.legcoresult.logic.AttitudeService;
 import com.playlife.legcoresult.logic.CommitteeService;
+import com.playlife.legcoresult.logic.PersonService;
 
 @PersistenceCapable (identityType = IdentityType.APPLICATION)
 public class Person {
@@ -25,48 +25,54 @@ public class Person {
 	@Persistent (valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Long id;
 
-	@Persistent (defaultFetchGroup = "true")
-	private Set<Long> finalAmendmentAttitudeId = new HashSet<Long>();
+	@Persistent
+	private String name;
+
 	@Persistent (defaultFetchGroup = "true")
 	private Set<Long> committeeId = new HashSet<Long>();
 
 	@Autowired
-	private AttitudeService attitudeService;
+	private PersonService personService;
 	@Autowired
-	private CommitteeService memberService;
+	private CommitteeService committeeService;
+
+	public Person(String name) {
+		this();
+		setName(name);
+	}
+
+	private Person() {
+		personService.save(this);
+	}
 
 	public boolean addCommittee(Committee committee) {
-		if (committee == null) return false;
+		if (committee == null || committee.getId() == null) return false;
 		if (committeeId.contains(committee.getId())) return true;
 		return committeeId.add(committee.getId());
 	}
 
-	public List<Attitude> getFinalAmendmentAttitude() {
-		return attitudeService.getById(finalAmendmentAttitudeId);
-	}
-
-	public Long getId() {
-		return id;
-	}
-
 	public List<Committee> getCommittee() {
-		return memberService.getById(committeeId);
+		return committeeService.getById(committeeId);
 	}
 
 	public Set<Long> getCommitteeId() {
 		return Collections.unmodifiableSet(this.committeeId);
 	}
 
+	public Long getId() {
+		return id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
 	public void setId(Long id) {
 		this.id = id;
 	}
 
-	boolean updateAmendmentFinalAttitude(Long oldAmendmentId, Long newAttitudeId) {
-		if (oldAmendmentId != null) {
-			Attitude oldAttitude = attitudeService.getByAmendmentIdAndPerson(oldAmendmentId, this);
-			finalAmendmentAttitudeId.remove(oldAttitude.getId());
-		}
-		if (finalAmendmentAttitudeId.contains(newAttitudeId)) return true;
-		return finalAmendmentAttitudeId.add(newAttitudeId);
+	public void setName(String name) {
+		this.name = name;
 	}
+
 }

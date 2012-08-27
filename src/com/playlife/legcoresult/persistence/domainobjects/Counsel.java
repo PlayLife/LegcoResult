@@ -15,7 +15,9 @@ import javax.jdo.annotations.PrimaryKey;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.playlife.legcoresult.logic.AmendmentService;
+import com.playlife.legcoresult.logic.AttendanceService;
 import com.playlife.legcoresult.logic.CommitteeService;
+import com.playlife.legcoresult.logic.CouncilService;
 import com.playlife.legcoresult.logic.CounselService;
 import com.playlife.legcoresult.utility.PersistenceException;
 
@@ -38,26 +40,37 @@ public class Counsel {
 	private Long initiatorId;
 
 	@Persistent (defaultFetchGroup = "true")
+	private Long councilId;
+
+	@Persistent (defaultFetchGroup = "true")
 	private Long finalAmendmentId;
 
 	@Persistent (defaultFetchGroup = "true")
 	private Set<Long> amendmentId = new HashSet<Long>();
 
+	@Persistent (defaultFetchGroup = "true")
+	private Set<Long> attendanceId = new HashSet<Long>();
+
+	@Autowired
+	private CouncilService councilService;
 	@Autowired
 	private CounselService counselService;
 	@Autowired
 	private AmendmentService amendmentService;
 	@Autowired
 	private CommitteeService committeeService;
+	@Autowired
+	private AttendanceService attendanceService;
+
+	public Counsel(Council council, String title, Committee initiator) {
+		this();
+		this.setCouncil(council);
+		this.setTitle(title);
+		this.setInitiator(initiator);
+	}
 
 	private Counsel() {
 		counselService.save(this);
-	}
-
-	public Counsel(String title, Committee initiator) {
-		this();
-		this.setTitle(title);
-		this.setInitiator(initiator);
 	}
 
 	public boolean addAmendment(Amendment newAmendment) {
@@ -66,7 +79,8 @@ public class Counsel {
 		return this.amendmentId.add(newAmendment.getId());
 	}
 
-	public Collection<Amendment> addAmendment(Collection<Amendment> newAmendment) {
+	public Collection<Amendment> addAmendment(
+		Collection<Amendment> newAmendment) {
 		Collection<Amendment> failAmendment = new HashSet<Amendment>();
 		for (Amendment amendment : newAmendment) {
 			if (!addAmendment(amendment)) {
@@ -76,8 +90,27 @@ public class Counsel {
 		return failAmendment;
 	}
 
+	public boolean addAttendance(Attendance attendance) {
+		if (attendance == null || attendance.getId() == null) return false;
+		if (attendanceId.contains(attendance.getId())) return true;
+		return attendanceId.add(attendance.getId());
+	}
+
 	public List<Amendment> getAmendment() {
 		return amendmentService.getByCounsel(this);
+	}
+
+	public Set<Long> getAmendmentId() {
+		return Collections.unmodifiableSet(this.amendmentId);
+	}
+
+	public List<Attendance> getAttendance() {
+		return Collections.unmodifiableList(attendanceService
+			.getByCounsel(this));
+	}
+
+	public Council getCouncil() {
+		return councilService.getById(councilId);
 	}
 
 	public Amendment getFinalAmendment() {
@@ -92,8 +125,13 @@ public class Counsel {
 		}
 	}
 
+	public Long getFinalAmendmentId() {
+		return this.finalAmendmentId;
+	}
+
 	public List<Attitude> getFinalAttitude() {
-		return amendmentService.getById(finalAmendmentId).getCommitteeAttitude();
+		return amendmentService.getById(finalAmendmentId)
+			.getCommitteeAttitude();
 	}
 
 	public Long getId() {
@@ -116,6 +154,11 @@ public class Counsel {
 		return this.amendmentId.remove(removeAmendment.getId());
 	}
 
+	public void setCouncil(Council council) {
+		councilId = council.getId();
+		council.addCounsel(this);
+	}
+
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -135,7 +178,6 @@ public class Counsel {
 	void setFinalAmendment(Amendment finalAmendment) {
 		if (isPassed() && !finalAmendment.isPassed()) return;
 		this.setStatus(finalAmendment.getStatus());
-		finalAmendment.updateCommitteeFinalAttitude(this.finalAmendmentId);
 		this.finalAmendmentId = finalAmendment.getId();
 	}
 
@@ -145,13 +187,5 @@ public class Counsel {
 
 	void setStatus(Type_TopicStatus status) {
 		this.status = status;
-	}
-
-	public Long getFinalAmendmentId() {
-		return this.finalAmendmentId;
-	}
-
-	public Set<Long> getAmendmentId() {
-		return Collections.unmodifiableSet(this.amendmentId);
 	}
 }

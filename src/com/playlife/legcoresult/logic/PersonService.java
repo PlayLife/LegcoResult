@@ -8,8 +8,12 @@ import com.playlife.legcoresult.persistence.domainobjects.Person;
 public class PersonService {
 	@Autowired
 	IPersonDAO personDAO;
-	
-	public Person getById(Long id){
+
+	public Person getById(Long id) {
 		return personDAO.get(id);
+	}
+
+	public void save(Person person) {
+		personDAO.save(person);
 	}
 }

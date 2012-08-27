@@ -10,9 +10,8 @@ import org.springframework.stereotype.Component;
 
 import com.playlife.legcoresult.persistence.daos.IAttitudeDAO;
 import com.playlife.legcoresult.persistence.domainobjects.Amendment;
+import com.playlife.legcoresult.persistence.domainobjects.Attendance;
 import com.playlife.legcoresult.persistence.domainobjects.Attitude;
-import com.playlife.legcoresult.persistence.domainobjects.Committee;
-import com.playlife.legcoresult.persistence.domainobjects.Person;
 import com.playlife.legcoresult.persistence.domainobjects.Counsel;
 
 @Component
@@ -20,39 +19,46 @@ public class AttitudeService {
 
 	@Autowired
 	IAttitudeDAO attitudeDAO;
-	public Attitude getById(Long id){
+
+	public List<Attitude> getByAmendment(Amendment amendment) {
+		return attitudeDAO.find_all_byAmendmentId(amendment.getId());
+	}
+
+	public List<Attitude> getByAttendance(Attendance attendance) {
+		return attitudeDAO.find_all_byAttendanceId(attendance.getId());
+	}
+
+	public List<Attitude> getByCounsel(Counsel counsel) {
+		return attitudeDAO.find_all_byAmendmentId(new ArrayList<Long>(
+			counsel.getAmendmentId()));
+	}
+
+	public List<Attitude> getById(Collection<Long> id) {
+		return attitudeDAO.find_all(new ArrayList<Long>(id));
+	}
+
+	public Attitude getById(Long id) {
 		return attitudeDAO.get(id);
 	}
 
 	public List<Attitude> getById(Long... id) {
 		return attitudeDAO.find_all(Arrays.asList(id));
 	}
-	
-	public List<Attitude> getById(Collection<Long> id) {
-		return attitudeDAO.find_all(new ArrayList<Long>(id));
-	}
-
-	public List<Attitude> getByCommittee(Committee counsel) {
-		return attitudeDAO.find_all_byCommitteeId(counsel.getId());
-	}
-	
-	public List<Attitude> getByAmendment(Amendment amendment){
-		return attitudeDAO.find_all_byAmendmentId(amendment.getId());
-	}
 
 	public List<Attitude> getFinalAttitudeByCounsel(Counsel counsel) {
-		return attitudeDAO.find_all_byAmendmentId(counsel.getFinalAmendmentId());
+		return attitudeDAO.find_all_byAmendmentId(counsel
+			.getFinalAmendmentId());
 	}
 
-	public List<Attitude> getByCounsel(Counsel counsel) {
-		return attitudeDAO.find_all_byAmendmentId(new ArrayList<Long>(counsel.getAmendmentId()));
+	public Attitude getByAmendmentAndAttendance(Amendment amendment, Attendance attendance) {
+		return getByAmendmentIdAndAttendanceId(amendment.getId(), attendance.getId());
 	}
 	
-	public Attitude getByAmendmentIdAndPerson(Long amendmentId, Person person){
-		return attitudeDAO.find_one_byAmendmentIdAndCommitteeId(amendmentId, new ArrayList<Long>(person.getCommitteeId()));
+	public Attitude getByAmendmentIdAndAttendanceId(Long amendmentId, Long attendanceId) {
+		return attitudeDAO.find_one_byAmendmentIdAndAttendanceId(amendmentId, attendanceId);
 	}
-	
-	public void save(Attitude attitude){
+
+	public void save(Attitude attitude) {
 		attitudeDAO.save(attitude);
 	}
 }

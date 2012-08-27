@@ -6,16 +6,13 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-@PersistenceCapable(identityType = IdentityType.APPLICATION)
+@PersistenceCapable (identityType = IdentityType.APPLICATION)
 public class AppError {
 	/********************************
-	 * 								*
-	 * 			DB Field			*
-	 * 								*
-	 ********************************/ 
+	 * * DB Field * *
+	 ********************************/
 	@PrimaryKey
-    @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-    private Long errorId;
-	
-	
+	@Persistent (valueStrategy = IdGeneratorStrategy.IDENTITY)
+	private Long errorId;
+
 }
