@@ -14,4 +14,5 @@ public interface ICounselDAO extends IGenericDAO<Counsel, Long> {
 
 	@JDOQL (value = "name == p_name")
 	public Counsel find_one_byname(@P (name = "p_name") String name);
+	
 }

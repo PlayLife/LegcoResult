@@ -13,7 +13,6 @@
 	<div class='container'>
 		<jsp:include page="/template/userHeader" />
         <hr/>
-        
         <%@include file="/template/footer.jsp"%>
     </div>
 </body>
